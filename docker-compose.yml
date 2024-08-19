@@ -1,0 +1,9 @@
+services:
+  sbf:
+    image: ekourkchi/sbf_notebook:v1.0
+    mem_limit: "2000M"
+    ports:
+      - "9999:8888"
+    volumes:
+      - /home/ehsan/PanStarrs/Jan/HI/augment/SBF/codes/notebooks:/notebooks
+    command: jupyter notebook --ip=0.0.0.0" --port=8888" --no-browser --allow-root  --NotebookApp.token='' --NotebookApp.password=''
