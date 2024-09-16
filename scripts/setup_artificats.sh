@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export docker_base="ekourkchi/sbf_notebook:v1.0"
+export docker_base="astromatrix/sbf_notebook:v1.0"
 export package=$1
 
 

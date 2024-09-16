@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker build -t ekourkchi/sbf_base:v1.0 .
+docker build -t astromatrix/sbf_base:v1.0 -f Dockerfile "$@" ../../../
 

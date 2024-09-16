@@ -17,7 +17,7 @@ done
 export ART
 
 # Update PATH
-export PATH=$ART/dophot:$ART/legacy/bin:$ART/monsta/bin:$ART/xpa/bin:$PATH
+# export PATH=$ART/dophot:$ART/legacy/bin:$ART/monsta/bin:$ART/xpa/bin:$PATH
 
 # Update LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$ART/likenew/lib:$ART/monsta/lib:$ART/monsta/obs/libmongo:$ART/monsta/obs/libvista:$ART/monsta/obs/libzimage:$LD_LIBRARY_PATH

@@ -1,9 +1,23 @@
+version: '3'
 services:
   sbf:
-    image: ekourkchi/sbf_notebook:v1.0
+    image: astromatrix/sbf_tools:v1.0
+    # container_name: sbf_container
     mem_limit: "2000M"
     ports:
-      - "9999:8888"
+      - "8888:8888"
     volumes:
-      - /home/ehsan/PanStarrs/Jan/HI/augment/SBF/codes/notebooks:/notebooks
-    command: jupyter notebook --ip=0.0.0.0" --port=8888" --no-browser --allow-root  --NotebookApp.token='' --NotebookApp.password=''
+      - ./pysbf:/pysbf:ro
+      - /home/ehsan/PanStarrs/Jan/HI/augment/SBF/codes:/sbf
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=${DISPLAY}
+      - SHELL=/bin/bash
+      - BASH=bash
+    user: "${UID}:${GID}"
+    working_dir: /sbf
+    command: /root/.entry
+    # stdin_open: true  # Equivalent to -it for interactive mode
+    # tty: true         # Equivalent to -it for interactive mode
+    # restart: no       # --rm equivalent, no automatic restart
+

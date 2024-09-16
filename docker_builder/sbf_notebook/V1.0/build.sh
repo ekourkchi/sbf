@@ -22,4 +22,4 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # Run docker build with user-provided arguments
-docker build -t ekourkchi/sbf_notebook:v1.0 -f Dockerfile "$@" ../../../
+docker build -t astromatrix/sbf_tools:v1.0  -f Dockerfile "$@" ../../../
