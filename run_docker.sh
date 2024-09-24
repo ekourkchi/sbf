@@ -3,9 +3,6 @@
 
 docker pull astromatrix/sbf_tools:v1.0
 
-# xhost +local:docker 
-
-# export PS1='\[\e[31m\]\u\[\e[32m\]@\[\e[32m\]\h\[\]:\[\e[34m\]\w\[\e[0m\]$ '
 
 #  ## Windows
 # export display=$(grep -oP '(?<=nameserver\s)\d+\.\d+\.\d+\.\d+' /etc/resolv.conf):0
