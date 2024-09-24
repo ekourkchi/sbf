@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM astromatrix/heasoft:latest
 
 # Update the package list and install necessary packages
 RUN apt-get -y update
@@ -82,6 +82,8 @@ COPY scripts /scripts
 
 # add binaried to the tail of PATH
 RUN bash /scripts/inDocker_install_v1.0.sh legacy
+
+# ## already in the legacy repo
 #RUN bash /scripts/inDocker_install_v1.0.sh xpa    
 
 # add binaries to the head of PATH
