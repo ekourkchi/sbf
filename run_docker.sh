@@ -1,5 +1,21 @@
 #!/bin/bash
 
+
+docker pull astromatrix/sbf_tools:v1.0
+
+# xhost +local:docker 
+
+# export PS1='\[\e[31m\]\u\[\e[32m\]@\[\e[32m\]\h\[\]:\[\e[34m\]\w\[\e[0m\]$ '
+
+#  ## Windows
+# export display=$(grep -oP '(?<=nameserver\s)\d+\.\d+\.\d+\.\d+' /etc/resolv.conf):0
+
+# ## MAC
+# export display=192.168.0.6:0
+
+# ## Linux
+export display=$DISPLAY
+
 xhost +local:docker 
 
 docker run -it --rm \
@@ -13,8 +29,9 @@ docker run -it --rm \
     --name sbf_container \
     --hostname container \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -e DISPLAY=$DISPLAY \
+    -e DISPLAY=$display \
     -e color_prompt=yes \
+    --platform linux/amd64 \
     astromatrix/sbf_notebook:v1.0 /bin/bash
     
 xhost -local:docker
