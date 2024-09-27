@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-export NOTEBOOKS_FOLDER="notebooks"
+export NOTEBOOKS_FOLDER="$PWD/notebooks"
 export NOTEBOOK_IP="8888"
 
 
