@@ -14,11 +14,11 @@ docker pull astromatrix/notebook:v1.0
 
 # ## MAC
 # export display=192.168.0.6:0
-ip_address=$(ifconfig | grep -A 1 'en' | grep 'inet ' | awk '{print $2}')
-export display=$ip_address:0
+# ip_address=$(ifconfig | grep -A 1 'en' | grep 'inet ' | awk '{print $2}')
+# export display=$ip_address:0
 
 # ## Linux
-# export display=$DISPLAY
+export display=$DISPLAY
 
 xhost +local:docker 
 
