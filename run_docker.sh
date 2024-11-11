@@ -4,7 +4,7 @@
 export NOTEBOOKS_FOLDER="$PWD/notebooks"
 export NOTEBOOK_IP="8888"
 
-docker pull astromatrix/notebook:v1.0
+docker pull astromatrix/sbf_notebook:v1.0
 
 #  ## Windows
 # export display=$(grep -oP '(?<=nameserver\s)\d+\.\d+\.\d+\.\d+' /etc/resolv.conf):0
