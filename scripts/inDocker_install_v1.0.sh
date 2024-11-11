@@ -158,7 +158,7 @@ function setup_ds9() {
 
     cp -rf /tmp/${PACK}/bin $artifacts/${PACK}  ; verify
 
-    rm -rf /tmp/$PACK  ; verify
+    # rm -rf /tmp/$PACK  ; verify
 
     update_path "$bashfile" "PATH" "$artifacts/$PACK/bin" "head"  
 }
@@ -172,9 +172,14 @@ function setup_ds94install() {
     
     ## Run the following commands inside the docker container and then 
     ## copy all artifcats to a legacy binary folder
-
+    
+    # cd SAOImageDS9; verify
     # unix/configure; verify
     # make ; verify
+    # rm -rf $artifacts/$PACK ; verify
+    # mkdir -p $artifacts/$PACK ; verify
+    # cp -rf bin $artifacts/$PACK/. ; verify
+    # update_path "$bashfile" "PATH" "$artifacts/$PACK/bin" "head"
 }
 
 

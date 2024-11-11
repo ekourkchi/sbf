@@ -40,3 +40,5 @@ docker system prune -f
 
 http://localhost:9999/tree?
 
+
+xhost + 192.168.0.6

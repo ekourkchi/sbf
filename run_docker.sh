@@ -4,9 +4,6 @@
 export NOTEBOOKS_FOLDER="$PWD/notebooks"
 export NOTEBOOK_IP="8888"
 
-
-
-
 docker pull astromatrix/notebook:v1.0
 
 #  ## Windows
