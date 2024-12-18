@@ -33,36 +33,26 @@ from .sbfTools import *
 
 ##############################################################
 
-
 def eval_plots(config):
-
     root = config["DIR"]
-    psf = config["PSF"]
-    prf = config["PRF"]
-    rsd = config["RSD"]
-    ptm = config["PTM"]
+    files = [config[key] for key in ["PSF", "PRF", "RSD", "PTM"]]
+    titles = ["PSF", "Profile", "Residual", "Point Source Mask"]
 
     cwd = os.getcwd()
     os.chdir(root)
 
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(15, 5))
+    fig, axes = plt.subplots(1, 4, figsize=(15, 5))
 
-    tv(psf, ax=ax1, options="sqrt")
-    ax1.set_title("PSF")
-    tv(prf, ax=ax2, options="sqrt")
-    ax2.set_title("Profile")
-    tv(rsd, ax=ax3)
-    ax3.set_title("Residual")
-    tv(ptm, ax=ax4)
-    ax4.set_title("Point Source Mask")
+    for ax, file, title in zip(axes, files, titles):
+        tv(file, ax=ax, options="sqrt" if title != "Residual" else None)
+        ax.set_title(title)
 
     os.chdir(cwd)
 
-    return ax1, ax2, ax3, ax4
+    return axes
 
 
 ##############################################################
-
 
 def get_sbf_signal(
     DIR,
@@ -82,86 +72,68 @@ def get_sbf_signal(
     ncols=512,
     sky_adjustment=0,
 ):
+    """
+    Generate the SBF signal using the provided parameters and configuration.
 
-    KS0 = K_fit_range[0]
-    KS1 = K_fit_range[1]
-    psfk0 = psf_k[0]
-    psfk1 = psf_k[1]
-    a0 = angle[0]
-    a1 = angle[1]
-    r0 = radius[0]
-    r1 = radius[1]
-    X0 = center[0]
-    Y0 = center[1]
+    Parameters:
+    DIR (str): Directory where the files are located.
+    PSF (str): Path to the PSF file.
+    PRF (str): Path to the PRF file.
+    RSD (str): Path to the RSD file.
+    PTM (str): Path to the PTM file.
+    power_file (str): Name of the output power file. Default is "power.c0".
+    tv_file (str): Name of the output TV file. Default is "tv.jpg".
+    K_fit_range (list): Range of K values for fitting. Default is [25, 60].
+    psf_order (int): Order of the PSF. Default is 4.
+    psf_k (list): Range of PSF K values. Default is [0, 15].
+    radius (list): Radius range for the mask. Default is [32, 64].
+    angle (list): Angle range for the mask. Default is [0, 360].
+    center (list): Center coordinates for the mask. Default is [256, 256].
+    nrows (int): Number of rows for the output image. Default is 512.
+    ncols (int): Number of columns for the output image. Default is 512.
+    sky_adjustment (float): Adjustment value for the sky. Default is 0.
+
+    Returns:
+    tuple: A tuple containing:
+        - P0 (float): The SBF signal value.
+        - dP0 (float): The uncertainty in the SBF signal value.
+        - power_file (str): Path to the generated power file.
+        - tv_file (str): Path to the generated TV file.
+    """
+    KS0, KS1 = K_fit_range
+    psfk0, psfk1 = psf_k
+    a0, a1 = angle
+    r0, r1 = radius
+    X0, Y0 = center
 
     cwd = os.getcwd()
     os.chdir(DIR)
 
-    monsta_script = (
-        """
-
-        rd 1 '"""
-        + str(PSF)
-        + """'                   ! reading psf from library
-        rd 2 '"""
-        + str(PRF)
-        + """'                   ! eliprof final model
-        rd 3 '"""
-        + str(RSD)
-        + """'                   ! galaxy subtracted residual
-        rd 5 '"""
-        + str(PTM)
-        + """' bitmap            ! hybrid point source mask  (dophot+sextractor)
-        ac 3 """
-        + str(sky_adjustment)
-        + """
+    monsta_script = f"""
+        rd 1 '{PSF}'                   ! reading psf from library
+        rd 2 '{PRF}'                   ! eliprof final model
+        rd 3 '{RSD}'                   ! galaxy subtracted residual
+        rd 5 '{PTM}' bitmap            ! hybrid point source mask  (dophot+sextractor)
+        ac 3 {sky_adjustment}
         mi 3 5
         cop 4 1
-        open 6 nr="""
-        + str(nrows)
-        + """ nc="""
-        + str(ncols)
-        + """
-        fluc 6 5 mask x0="""
-        + str(X0)
-        + """ y0="""
-        + str(Y0)
-        + """ r0="""
-        + str(r0)
-        + """ r1="""
-        + str(r1)
-        + """ a0="""
-        + str(a0)
-        + """ a1="""
-        + str(a1)
-        + """ ! c0     taking the donut shape and putting the mask
+        open 6 nr={nrows} nc={ncols}
+        fluc 6 5 mask x0={X0} y0={Y0} r0={r0} r1={r1} a0={a0} a1={a1} ! c0     taking the donut shape and putting the mask
         cop 7 6
         mi 7 3
         !tv 7 
         fluc 6 2 window         ! taking the fft of the mask multiply by the sqrt of the galaxy profile 
         ! fluc 6 4 expect plot ... 
-        fluc 6 4 expect order="""
-        + str(psf_order)
-        + """ k0="""
-        + str(psfk0)
-        + """ k1="""
-        + str(psfk1)
-        + """   ! expectation power spectrum for psf  0->20
+        fluc 6 4 expect order={psf_order} k0={psfk0} k1={psfk1}   ! expectation power spectrum for psf  0->20
         fft 8 7
         power 4 8
-        fluc 6 4 fit ks0="""
-        + str(KS0)
-        + """ ks1="""
-        + str(KS1)
-        + """ plot   ! 6:expectation opower spectrum   4:the power spectrum of data   ks: the power range ->>
-        print fluc file="""
-        + power_file + """
-        """
-    )
+        fluc 6 4 fit ks0={KS0} ks1={KS1} plot   ! 6:expectation opower spectrum   4:the power spectrum of data   ks: the power range ->>
+        print fluc file={power_file}
+    """
 
     if tv_file is not None:
-        monsta_script += """     
-        tv 7 JPEG="""+ tv_file + """
+        monsta_script += f"""
+        tv 7 JPEG={tv_file}
         """
 
     run_monsta(monsta_script, "monsta.pro", "monsta.log")
@@ -178,7 +150,6 @@ def get_sbf_signal(
         tv_file = ""
 
     return (P0, dP0), os.path.join(DIR, power_file), os.path.join(DIR, tv_file)
-
 
 ##############################################################
 def extract_sbf_result(fname):
@@ -234,6 +205,16 @@ def extract_sbf_result(fname):
 
 
 def plot_power(fname="test.c0", axes=None):
+    """
+    Plots the power and D values extracted from the given file.
+
+    Parameters:
+    fname (str): The name of the file to extract data from. Default is "test.c0".
+    axes (tuple): A tuple of matplotlib axes to plot on. If None, new axes will be created.
+
+    Returns:
+        ax1, ax2, (K, X)
+    """
 
     K, P0, P0_h, Power, D, X = extract_sbf_result(fname)
 

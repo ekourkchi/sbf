@@ -1,4 +1,5 @@
-import os, sys, string, math, uuid, time, json
+import os, string, math, uuid, time, json
+import subprocess
 import numpy as np
 from scipy.linalg import eigh
 from scipy.optimize import minimize_scalar
@@ -29,6 +30,12 @@ import pylab, os, sys
 import copy
 
 from .utils import *
+
+
+# Redirect output using subprocess
+def run_command(command: list):
+    with open(os.devnull, 'w') as devnull:
+        subprocess.run(command, stdout=devnull, stderr=devnull)
 
 ##############################################################
 class SBFobject:
@@ -102,14 +109,14 @@ class SBFobject:
             self.inFolder = inFolder + "/"
 
         if automatic:
-            try:
+            if True: # try:
                 self.SExtract()
-            except:
-                print("Error: Could not run Source Extractor on the file")
-                fits_file = self.inFolder + "{}/{}j.fits".format(name, name)
-                if not os.path.exists(fits_file):
-                    print("Couldn't find " + fits_file)
-                return
+            # except:
+            #     print("Error: Could not run Source Extractor on the file")
+            #     fits_file = self.inFolder + "{}/{}j.fits".format(name, name)
+            #     if not os.path.exists(fits_file):
+            #         print("Couldn't find " + fits_file)
+            #     return
 
         hdu_list = fits.open(self.inFolder + "{}/{}j.fits".format(name, name))
         image_data = hdu_list[0].data
@@ -181,7 +188,9 @@ class SBFobject:
 
         return self.plot_jpg(jpg_name, ax=ax)
 
+    
     def SExtract(self):
+
 
         name = self.name
         root = self.objRoot
@@ -213,7 +222,14 @@ class SBFobject:
             + STARNNW_NAME
         )
 
-        xcmd(cmd + " > " + root + "source_extractor.log", verbose=False)
+        # Append redirection for logging
+        log_file = root + "source_extractor.log"
+        cmd_with_logging = cmd + f" > {log_file} 2>&1"
+
+
+        run_command(cmd.split(" "))
+
+
 
         col_names = self.getColName(catalName)
 
@@ -700,7 +716,6 @@ class SBFobject:
         return monsta_output
 
     def naive_Sextract(self, minArea=10, thresh=2, mask=None, smooth=None):
-
         name = self.name
         root = self.objRoot
 
@@ -717,43 +732,27 @@ class SBFobject:
         if smooth is not None:
             script = (
                 """
-            rd 1 """
-                + fits_name
-                + """
-            smooth 1 fw="""
-                + str(smooth)
-                + """
-            wd 1 """
-                + odj_common
-                + """
+            rd 1 {}
+            smooth 1 fw={}
+            wd 1 {}
             q
-            
-            """
+            """.format(fits_name, smooth, odj_common)
             )
             fits_name = odj_common
             self.run_monsta(script, root + "obj.pro", root + "obj.log")
 
         model = 0
-        if mask is None:
-            suffix_mask = ".%03d" % model
-        else:
-            suffix_mask = ".%03d" % mask
-
+        suffix_mask = ".%03d" % (mask if mask is not None else model)
         maskName = root + "/mask" + suffix_mask
 
         script = (
             """
-        rd 1 """
-            + fits_name
-            + """
+        rd 1 {}
         rd 2 common.mask
         mi 1 2
-        wd 1 """
-            + odj_common
-            + """
+        wd 1 {}
         q
-
-        """
+        """.format(fits_name, odj_common)
         )
         self.run_monsta(script, root + "obj.pro", root + "obj.log")
 
@@ -763,26 +762,20 @@ class SBFobject:
         FILTER_NAME = config + "sextractor/gauss_2.0_5x5.conv"
         STARNNW_NAME = config + "sextractor/default.nnw"
 
-        cmd = "sex -c " + sex_config + " " + odj_common
-        cmd += (
-            " -BACK_SIZE 500 -DETECT_MINAREA "
-            + str(minArea)
-            + " -DETECT_THRESH "
-            + str(thresh)
-            + ' -CHECKIMAGE_TYPE "SEGMENTATION" -CHECKIMAGE_NAME '
-        )
-        cmd += maskName
-        cmd += " -CATALOG_NAME  " + root + "/naiive_sextract_wfc3j.cat"
-        cmd += (
-            " -PARAMETERS_NAME "
-            + PARAMETERS_NAME
-            + " -FILTER_NAME "
-            + FILTER_NAME
-            + " -STARNNW_NAME "
-            + STARNNW_NAME
+        cmd = (
+            "sex -c {} {} -BACK_SIZE 500 -DETECT_MINAREA {} -DETECT_THRESH {} "
+            '-CHECKIMAGE_TYPE "SEGMENTATION" -CHECKIMAGE_NAME {} '
+            "-CATALOG_NAME {} "
+            "-PARAMETERS_NAME {} "
+            "-FILTER_NAME {} "
+            "-STARNNW_NAME {}"
+        ).format(
+            sex_config, odj_common, minArea, thresh, maskName, root + "/naive_sextract_wfc3j.cat",
+            PARAMETERS_NAME, FILTER_NAME, STARNNW_NAME
         )
 
-        xcmd(cmd + " > " + "sextractor.log", verbose=False)
+        run_command(cmd.split(" "))
+
 
         im, header = imOpen(maskName)
         x0 = int(np.round(self.x0))
@@ -801,7 +794,6 @@ class SBFobject:
         return ax1, ax2, ax3, ax4
 
     def backSextract(self, thresh=0.03):
-
         name = self.name
         root = self.objRoot
         config = self.config
@@ -814,42 +806,32 @@ class SBFobject:
         FILTER_NAME = config + "sextractor/gauss_2.0_5x5.conv"
         STARNNW_NAME = config + "sextractor/default.nnw"
 
+        # Run MONSTA
         script = (
+            f"""
+            rd 1 {fits_name}
+            rd 2 {self.config}/common.mask
+            mi 1 2
+            wd 1 {odj_common}
+            q
             """
-        rd 1 """
-            + fits_name
-            + """
-        rd 2 """
-            + self.config
-            + """/common.mask
-        mi 1 2
-        wd 1 """
-            + odj_common
-            + """
-        q
-
-        """
         )
         self.run_monsta(script, root + "obj.pro", root + "obj.log")
 
-        cmd = "sex -c " + sex_config + " " + odj_common
-        cmd += " -CATALOG_NAME  " + root + "/background_wfc3j.cat"
-        cmd += (
-            " -BACK_SIZE 500 -DETECT_MINAREA 4 -DETECT_THRESH "
-            + str(thresh)
-            + ' -CHECKIMAGE_TYPE "SEGMENTATION" -CHECKIMAGE_NAME '
-        )
-        cmd += segmentation
-        cmd += (
-            " -PARAMETERS_NAME "
-            + PARAMETERS_NAME
-            + " -FILTER_NAME "
-            + FILTER_NAME
-            + " -STARNNW_NAME "
-            + STARNNW_NAME
+        # Construct command for SExtractor
+        cmd = (
+            f"sex -c {sex_config} {odj_common} "
+            f"-CATALOG_NAME {root}/background_wfc3j.cat "
+            f"-BACK_SIZE 500 -DETECT_MINAREA 4 -DETECT_THRESH {thresh} "
+            f'-CHECKIMAGE_TYPE "SEGMENTATION" -CHECKIMAGE_NAME {segmentation} '
+            f"-PARAMETERS_NAME {PARAMETERS_NAME} "
+            f"-FILTER_NAME {FILTER_NAME} "
+            f"-STARNNW_NAME {STARNNW_NAME}"
         )
 
-        xcmd(cmd + " > " + root + "sextractor.log", verbose=False)
+
+        run_command(cmd.split(" "))
+
 
         mask2 = seg2mask(segmentation, segmentation)
         im, _ = imOpen(odj_common)

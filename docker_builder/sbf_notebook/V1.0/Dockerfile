@@ -5,6 +5,7 @@ SHELL ["/bin/bash", "-c"]
 ENV SBF_USER=sbf
 ENV HOME=/home/$SBF_USER
 
+
 #### BEGIN add other installs ##########################################
 ##
 RUN conda update -n base -c defaults conda && \
@@ -14,15 +15,21 @@ RUN conda update -n base -c defaults conda && \
     pip install pyregion && \
     pip install corner
 
+RUN conda config --add channels defaults
 RUN wget https://github.com/spacetelescope/stenv/releases/download/2024.08.14/stenv-Linux-X64-py3.10-2024.08.14.yaml
 RUN conda env create --name stenv --file stenv-Linux-X64-py3.10-2024.08.14.yaml
 #### END add other installs ############################################
 
-RUN echo "alias notebook='/home/$SBF_USER/.notebook'" >> /home/$SBF_USER/.bashrc
-RUN echo "#!/bin/bash" >> /home/$SBF_USER/.notebook
-RUN echo "source /home/$SBF_USER/.bashrc" >> /home/$SBF_USER/.notebook
-RUN echo "jupyter lab  --ip=0.0.0.0 --port=8888  --no-browser --NotebookApp.token='' --NotebookApp.password='' " >> /home/$SBF_USER/.notebook
-RUN chmod 555 /home/$SBF_USER/.notebook
+# RUN echo "alias notebook='/home/$SBF_USER/.notebook'" >> /home/$SBF_USER/.bashrc
+# RUN echo "#!/bin/bash" >> /home/$SBF_USER/.notebook
+# RUN echo "source /home/$SBF_USER/.bashrc" >> /home/$SBF_USER/.notebook
+# RUN echo "jupyter lab  --ip=0.0.0.0 --port=8888  --no-browser --NotebookApp.token='' --NotebookApp.password='' " >> /home/$SBF_USER/.notebook
+# RUN chmod 555 /home/$SBF_USER/.notebook
+
+USER root
+RUN chown -R $SBF_USER:$SBF_USER /home/$SBF_USER/.cache
+RUN chown -R $SBF_USER:$SBF_USER /home/$SBF_USER/.conda
+
 
 USER $SBF_USER
 
