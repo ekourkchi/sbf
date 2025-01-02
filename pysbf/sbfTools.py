@@ -653,38 +653,28 @@ class SBFobject:
         FILTER_NAME = config + "sextractor/gauss_2.0_5x5.conv"
         STARNNW_NAME = config + "sextractor/default.nnw"
 
+        # Construct command for SExtractor
         sex_cmd = (
-            """sex """
-            + residName
-            + """ -c """
-            + sex_config
-            + """ -CHECKIMAGE_NAME """
-            + segment
-        )
-        sex_cmd += " -CATALOG_NAME  " + objCatal
-        sex_cmd += " -DETECT_MINAREA " + str(minArea)
-        sex_cmd += " -DETECT_THRESH " + str(thresh)
-        sex_cmd += " -ANALYSIS_THRESH " + str(thresh)
-        sex_cmd += " -CHECKIMAGE_TYPE SEGMENTATION "
-        sex_cmd += (
-            " -PARAMETERS_NAME "
-            + PARAMETERS_NAME
-            + " -FILTER_NAME "
-            + FILTER_NAME
-            + " -STARNNW_NAME "
-            + STARNNW_NAME
+            f"sex {residName} -c {sex_config} "
+            f"-CHECKIMAGE_NAME {segment} "
+            f"-CATALOG_NAME {objCatal} "
+            f"-DETECT_MINAREA {minArea} "
+            f"-DETECT_THRESH {thresh} "
+            f"-ANALYSIS_THRESH {thresh} "
+            f'-CHECKIMAGE_TYPE "SEGMENTATION" '
+            f"-PARAMETERS_NAME {PARAMETERS_NAME} "
+            f"-FILTER_NAME {FILTER_NAME} "
+            f"-STARNNW_NAME {STARNNW_NAME}"
         )
 
         if renuc is not None:
-            sex_cmd += " -WEIGHT_IMAGE  " + variance
-            sex_cmd += " -WEIGHT_TYPE  MAP_VAR"
+            sex_cmd += (
+                f" -WEIGHT_IMAGE {variance} "
+                f"-WEIGHT_TYPE MAP_VAR"
+            )
 
-        # print(sex_cmd)
-
-        xcmd(sex_cmd + " > " + root + "source_extractor.log", verbose=False)
+        run_command(sex_cmd.split(" "))
         seg2mask(segment, objName)
-
-        # print(segment, objName, maskName)
 
         xcmd("cp {} ./common.mask".format(self.config + "/common.mask"), verbose=False)
 
@@ -781,7 +771,7 @@ class SBFobject:
         x0 = int(np.round(self.x0))
         y0 = int(np.round(self.y0))
 
-        fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(16, 4))
+        fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(11, 4))
 
         im, header = imOpen(maskName)
         ax1.imshow(np.flipud(im))
@@ -791,7 +781,7 @@ class SBFobject:
 
         os.chdir(cwd)
 
-        return ax1, ax2, ax3, ax4
+        return fig, ax1, ax2, ax3, ax4
 
     def backSextract(self, thresh=0.03):
         name = self.name
@@ -829,9 +819,7 @@ class SBFobject:
             f"-STARNNW_NAME {STARNNW_NAME}"
         )
 
-
         run_command(cmd.split(" "))
-
 
         mask2 = seg2mask(segmentation, segmentation)
         im, _ = imOpen(odj_common)
@@ -974,7 +962,15 @@ class SBFobject:
 
     def plot_background(self):
 
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 4))
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(11, 4), gridspec_kw={'wspace': 0.4})
+
+        # ax1 = axes[0][0]
+        # ax2 = axes[0][1]
+        # ax3 = axes[1][0]
+        # ax4 = axes[1][1]  # Reference to the axes you want to be blank
+
+        # Turn off the ax4 plot
+        # ax4.axis("off")  # Makes the entire subplot blank
 
         ## objects are masked, display background pixels
         ax1 = plot_2darray(self.masked_image, ax=ax1)
@@ -1030,7 +1026,7 @@ class SBFobject:
         # since we have not specify the model number, the generated model takes a value of `0`
         msg = self.elliprof(r0, r1, nr=nr, sky=sky, niter=10, options=options, mask=1)
 
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 4))
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(11, 5))
 
         ## Calculating the number of crossing ellipses, the generated model = 0, from previous linen_cross = Xellipses(obj.list_ellipses(model=0))
         self.tv(options="log", ax=ax1)
@@ -1060,6 +1056,16 @@ class SBFobject:
 
         plt.savefig(pngName)
         print("fig. name: ", pngName)
+
+        fig.tight_layout(pad=0)
+        try: 
+            fig.canvas.layout.width = '1100px'  # Set width to match figsize
+            fig.canvas.layout.height = '500px'  # Set height to match figsize
+            fig.canvas.toolbar_visible = False
+            fig.canvas.header_visible = False
+            fig.canvas.footer_visible = False
+        except:
+            pass
 
         return (ax1, ax2)
 
@@ -1100,6 +1106,16 @@ class SBFobject:
 
         plt.savefig(pngName)
         print("fig. name: ", pngName)
+
+        fig.tight_layout(pad=2)
+        try: 
+            fig.canvas.layout.width = '1100px'  # Set width to match figsize
+            fig.canvas.layout.height = '400px'  # Set height to match figsize
+            fig.canvas.toolbar_visible = False
+            fig.canvas.header_visible = False
+            fig.canvas.footer_visible = False
+        except:
+            pass
 
         return (ax1, ax2, ax3)
 
@@ -1200,7 +1216,7 @@ class SBFobject:
         ].value
         smooth = self.params[main_key]["smooth"] = self.widgets["naive_smooth"].value
 
-        ax1, ax2, ax3, ax4 = self.naive_Sextract(
+        fig, ax1, ax2, ax3, ax4 = self.naive_Sextract(
             minArea=minarea, thresh=threshold, mask=0, smooth=smooth
         )
         ax1.set_title("Segmentation", fontsize=14)
@@ -1236,7 +1252,17 @@ class SBFobject:
         plt.savefig(pngName)
         print("fig. name: ", pngName)
 
-        return (ax1, ax2, ax3, ax4)
+        fig.tight_layout(pad=0)
+        try: 
+            fig.canvas.layout.width = '1100px'  # Set width to match figsize
+            fig.canvas.layout.height = '400px'  # Set height to match figsize
+            fig.canvas.toolbar_visible = False
+            fig.canvas.header_visible = False
+            fig.canvas.footer_visible = False
+        except:
+            pass
+
+        return fig, ax1, ax2, ax3, ax4
 
     #########################################################
     def basic_elliprof_widget(self):
@@ -1503,9 +1529,9 @@ class SBFobject:
 
         # plotting model 0
 
-        fig, ax = plt.subplots(2, 2, figsize=(13, 13))
+        fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(11, 5))
 
-        self.tv_resid(model=0, ax=ax[0][0], options="sqrt")
+        self.tv_resid(model=0, ax=ax0, options="sqrt")
         Ell = ((self.x0, self.y0), 1.0 * self.a, 1.0 * self.b, self.angle)
         e = patches.Ellipse(
             Ell[0],
@@ -1517,45 +1543,74 @@ class SBFobject:
             edgecolor="r",
             facecolor="none",
         )
-        ax[0][0].add_patch(e)
-        ax[0, 0].set_title("Residual")
+        ax0.add_patch(e)
+        ax0.set_title("Residual")
 
-        self.tv_mask(mask=2, ax=ax[0][1])
+        self.tv_mask(mask=2, ax=ax1)
         self.plot_ellipse(
             model=0,
-            ax=ax[0][1],
+            ax=ax1,
             alpha=0.5,
             linewidth=1,
             edgecolor="r",
             facecolor="none",
         )
 
-        self.tv(ax=ax[1][0], options="sqrt")
-        ax[1][0].set_title(self.name, fontsize=14)
-        self.tv_model(model=0, ax=ax[1, 1], options="sqrt")
-        ax[1, 1].set_title("Model")
+        self.tv(ax=ax2, options="sqrt")
+        ax2.set_title(self.name, fontsize=14)
+        # self.tv_model(model=0, ax=ax[1, 1], options="sqrt")
+        # ax[1, 1].set_title("Model")
 
         pngName = self.objRoot + "/" + self.name + "_initial_model.png"
         plt.savefig(pngName)
         print("fig. name: ", pngName)
 
-        ax[0, 1].set_title("Mask 2 (additional)")
+        ax1.set_title("Mask 2 (additional)")
 
         resid = True
 
-        text = ax[1][1].text(0, 0, "test", va="bottom", ha="left")
+        # text = ax2.text(0, 0, "", va="bottom", ha="left")
 
-        def onclick(event):
-            global resid
-            tx = "button=%d, x=%d, y=%d, xdata=%f, ydata=%f" % (
-                event.button,
-                event.x,
-                event.y,
+        text = ax2.text(
+            -0.1, -0.2,  # Coordinates outside the axes (relative to the axes)
+            "", 
+            va="bottom", ha="left",
+            transform=ax2.transAxes  # Use axes-relative coordinates
+        )
+
+        pointer0, = ax0.plot([], [], 'r+', markersize=5)  # Red point for the pointer
+        pointer1, = ax1.plot([], [], 'r+', markersize=5)  # Red point for the pointer
+        pointer2, = ax2.plot([], [], 'r+', markersize=5)  # Red point for the pointer
+        def on_mouse_move(event):
+
+            tx = "x=%f, y=%f" % (
                 event.xdata,
                 event.ydata,
             )
             text.set_text(tx)
-            if event.inaxes == ax[0, 1]:
+
+            if event.inaxes == ax0:
+                x, y = event.xdata, event.ydata
+                pointer0.set_data([], [])
+                pointer1.set_data([x], [y])
+                pointer2.set_data([x], [y])
+                fig.canvas.draw_idle()
+            if event.inaxes == ax1:
+                x, y = event.xdata, event.ydata
+                pointer0.set_data([x], [y])
+                pointer1.set_data([], [])
+                pointer2.set_data([x], [y])
+                fig.canvas.draw_idle()  # Redraw the figure
+            if event.inaxes == ax2:
+                x, y = event.xdata, event.ydata
+                pointer0.set_data([x], [y])
+                pointer1.set_data([x], [y])
+                pointer2.set_data([], [])
+                fig.canvas.draw_idle()  # Redraw the figure
+
+        def onclick(event):
+            global resid
+            if event.inaxes == ax1:
                 event.inaxes.set_title("Mask 2 (additional)")
                 root = self.objRoot
                 segment = root + "/objCheck.000.segment"
@@ -1593,22 +1648,33 @@ class SBFobject:
                 )
                 self.run_monsta(script, root + "monsta.pro", root + "monsta.log")
                 #             self.tv_model(model=0, ax=ax[0,1], options='sqrt')
-                self.tv_mask(mask=2, ax=ax[0][1])
-                draw()
+                self.tv_mask(mask=2, ax=ax1)
+                fig.canvas.draw_idle()
 
-            if event.inaxes == ax[0, 0]:
+            if event.inaxes == ax0:
                 event.inaxes.set_title(resid)
                 if resid:
-                    self.tv(ax=ax[0][0], options="sqrt")
+                    self.tv(ax=ax0, options="sqrt")
                     resid = False
                 else:
-                    self.tv_resid(model=0, ax=ax[0][0], options="sqrt")
+                    self.tv_resid(model=0, ax=ax0, options="sqrt")
                     resid = True
-                draw()
+                fig.canvas.draw_idle()
 
         fig.canvas.callbacks.connect("button_press_event", onclick)
+        fig.canvas.mpl_connect('motion_notify_event', on_mouse_move)
 
-        return ax
+        fig.tight_layout(pad=0)
+        try: 
+            fig.canvas.layout.width = '1100px'  # Set width to match figsize
+            fig.canvas.layout.height = '500px'  # Set height to match figsize
+            fig.canvas.toolbar_visible = False
+            fig.canvas.header_visible = False
+            fig.canvas.footer_visible = False
+        except:
+            pass
+
+        return fig, (ax0, ax1, ax2)
 
     #########################################################
     def optimize_sky_factor(
