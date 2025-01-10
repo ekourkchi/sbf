@@ -1,3 +1,5 @@
+# version edited by J. Jensen 18 Nov 2024, added filetype for imagetypes for downloading PanSTARRS images in geturl() and getimages().
+
 import os, sys, string, math, uuid, time, json
 import numpy as np
 from scipy.linalg import eigh
@@ -11,7 +13,6 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from shapely.geometry.polygon import LinearRing
 from astropy.io import fits
-from astropy.io import ascii
 from astropy import wcs
 from matplotlib import cm
 from matplotlib.colors import LogNorm
@@ -28,9 +29,7 @@ from io import BytesIO
 import pylab, os, sys
 
 import copy
-# import ssl 
 
-# ssl._create_default_https_context = ssl._create_unverified_context
 
 ##############################################################
 class MissingGalaxyCenter(Exception):
@@ -375,32 +374,32 @@ def xcmd(cmd, verbose=True):
 ##############################################################
 
 
-def getimages(ra, dec, size=240, filters="grizy"):
+def getimages(
+        ra, dec, size=240, filters="grizy", imagetypes="stack"):
 
     """Query ps1filenames.py service to get a list of images
 
     ra, dec = position in degrees
     size = image size in pixels (0.25 arcsec/pixel)
     filters = string with filters to include
+    imagetypes = list of any of the acceptable image types.  Default is stack;
+        other common choices include warp (single-epoch images), stack.wt (weight image),
+        stack.mask, stack.exp (exposure time), stack.num (number of exposures),
+        warp.wt, and warp.mask.  This parameter can be a list of strings or a
+        comma-separated string.
     Returns a table with the results
     """
 
-    service = "http://ps1images.stsci.edu/cgi-bin/ps1filenames.py"
+    service = "https://ps1images.stsci.edu/cgi-bin/ps1filenames.py"
     url = (
-        f'{service}?ra={ra}&dec={dec}&size={size}&format=fits&filters={filters}'
-    )
-    
-    result = requests.get(url, verify=False)
-    data = result.content
-    table = ascii.read('\n'.join([str(x).replace(" ", ",") for x in data.split(b"\n")]), 
-                       format='csv')
-
+        "{service}?ra={ra}&dec={dec}&size={size}&format=fits" "&filters={filters}&type={imagetypes}"
+    ).format(**locals())
+    table = Table.read(url, format="ascii")
     return table
 
 
 def geturl(
-    ra, dec, size=240, output_size=None, filters="grizy", format="jpg", color=False
-):
+        ra, dec, size=240, output_size=None, filters="grizy", format="jpg", color=False, imagetypes="stack"):
 
     """Get URL for images in the table
 
@@ -410,7 +409,12 @@ def geturl(
                   output_size has no effect for fits format images.
     filters = string with filters to include
     format = data format (options are "jpg", "png" or "fits")
-    color = if True, creates a color image (only for jpg or png format).
+    imagetypes = list of any of the acceptable image types.  Default is stack;
+        other common choices include warp (single-epoch images), stack.wt (weight image),
+        stack.mask, stack.exp (exposure time), stack.num (number of exposures),
+        warp.wt, and warp.mask.  This parameter can be a list of strings or a
+        comma-separated string.
+   color = if True, creates a color image (only for jpg or png format).
             Default is return a list of URLs for single-filter grayscale images.
     Returns a string with the URL
     """
@@ -419,11 +423,11 @@ def geturl(
         raise ValueError("color images are available only for jpg or png formats")
     if format not in ("jpg", "png", "fits"):
         raise ValueError("format must be one of jpg, png, fits")
-    table = getimages(ra, dec, size=size, filters=filters)
+    table = getimages(ra, dec, size=size, filters=filters, imagetypes=imagetypes)
     url = (
-        f'https://ps1images.stsci.edu/cgi-bin/fitscut.cgi?ra={ra}&dec={dec}&size={size}&format={format}'
-    )
-
+        "https://ps1images.stsci.edu/cgi-bin/fitscut.cgi?"
+        "ra={ra}&dec={dec}&size={size}&format={format}&imagetypes={imagetypes}"
+    ).format(**locals())
     if output_size:
         url = url + "&output_size={}".format(output_size)
     # sort filters from red to blue
@@ -440,7 +444,6 @@ def geturl(
         url = []
         for filename in table["filename"]:
             url.append(urlbase + filename)
-
     return url
 
 
@@ -468,8 +471,7 @@ def getcolorim(ra, dec, size=240, output_size=None, filters="grizy", format="jpg
         format=format,
         color=True,
     )
-
-    r = requests.get(url, verify=False)
+    r = requests.get(url)
     im = Image.open(BytesIO(r.content))
     return im
 
@@ -492,12 +494,14 @@ def getgrayim(ra, dec, size=240, output_size=None, filter="g", format="jpg"):
     if filter not in list("grizy"):
         raise ValueError("filter must be one of grizy")
 
+    #     print(ra,dec, size, filter)
 
     url = geturl(
         ra, dec, size=size, filters=filter, output_size=output_size, format=format
     )
 
-    r = requests.get(url[0], verify=False)
+    #     print(url)
+    r = requests.get(url[0])
     im = Image.open(BytesIO(r.content))
 
     return im

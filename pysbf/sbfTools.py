@@ -962,7 +962,7 @@ class SBFobject:
 
     def plot_background(self):
 
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(11, 4), gridspec_kw={'wspace': 0.4})
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(11, 3), gridspec_kw={'wspace': 0.4})
 
         # ax1 = axes[0][0]
         # ax2 = axes[0][1]
@@ -1107,10 +1107,10 @@ class SBFobject:
         plt.savefig(pngName)
         print("fig. name: ", pngName)
 
-        fig.tight_layout(pad=2)
+        # fig.tight_layout(pad=4)
         try: 
             fig.canvas.layout.width = '1100px'  # Set width to match figsize
-            fig.canvas.layout.height = '400px'  # Set height to match figsize
+            fig.canvas.layout.height = '300px'  # Set height to match figsize
             fig.canvas.toolbar_visible = False
             fig.canvas.header_visible = False
             fig.canvas.footer_visible = False
