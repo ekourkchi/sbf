@@ -1,0 +1,74 @@
+! combined PSF stars for GO-16262
+! J. Jensen
+
+rd 1 ../u12517/u12517j.psf1 ! 4.5E7 mid pix both
+rd 2 ../u12517/u12517j.psf2 ! 6E7 mid pix both
+shift 1  dx=-73  dy=-774 
+shift 2  dx=-788  dy=-410
+
+rd 3 ../nextone...
+
+
+
+! add up centered ones
+cop 31 x
+ai 31  
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+wd 31 temp.on.psf
+
+! add up off-centered ones
+cop 32 1
+ai 32 2
+ai 32 
+ai 32 
+ai 32 
+ai 32 
+ai 32 
+ai 32 
+ai 32 
+ai 32 
+wd 32 temp.off.psf
+
+!------------
+! next set
+
+rd 31 temp.on.psf
+ai 31 
+ai 31 
+ai 31 
+ai 31 
+! wd 31 temp.on.psf
+
+rd 32 temp.off.psf
+ai 32 
+ai 32 
+ai 32 
+ai 32 
+! wd 32 temp.off.psf
+
+!-------------
+! next set
+
+rd 32 temp.off.psf
+ai 32 
+ai 32 
+ai 32 
+
+wd 31 combinedj.on.bright.psf.16262
+wd 32 combinedj.off.bright.psf.16262
+ai 31 32
+wd 31 combinedj.psf.16262
+
+

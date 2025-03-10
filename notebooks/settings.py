@@ -13,6 +13,9 @@ IN_FOLDER = HOME + 'data_in/wfc3/'
 # output path
 OUT_FOLDER = HOME + 'data_out/wfc3/'
 
+# PSF library
+PSF_LIBRARY = HOME + 'psflibrary/wfc3/'
+
 # PS path
 PS_IN = HOME + 'ps_data_in/'
 PS_OUT = HOME + 'ps_data_out/'

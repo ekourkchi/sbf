@@ -10,6 +10,7 @@ export DATA_IN="$SBF_PATH/data_in/"
 export DATA_OUT="$SBF_PATH/data_out/"
 export PS_IN="$SBF_PATH/ps_data_in/"
 export PS_OUT="$SBF_PATH/ps_data_out/"
+export PSF_LIBRARY="$SBF_PATH/psflibrary/"
 
 
 docker pull astromatrix/sbf_notebook:v1.0
@@ -50,6 +51,7 @@ docker run -it --rm \
     -v $DATA_OUT:/home/sbf/data_out \
     -v $PS_IN:/home/sbf/ps_data_in \
     -v $PS_OUT:/home/sbf/ps_data_out \
+    -v $PSF_LIBRARY:/home/sbf/psflibrary \
     -v $(pwd)/config:/home/sbf/config \
     -v $(pwd)/params:/home/sbf/params \
     -e SHELL=/bin/bash \

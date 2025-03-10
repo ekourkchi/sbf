@@ -1,0 +1,463 @@
+! combined PSF stars for GO-14219
+! J. Jensen
+
+rd 1 ../n0057/n0057j.psf1 ! 3E5
+shift 1  dx=-133  dy=-761
+
+rd 2 ../n0315/n0315j.psf1 ! 1.3E6 mid pix x
+rd 3 ../n0315/n0315j.psf2 ! 1E6 mid pix both
+rd 4 ../n0315/n0315j.psf5 ! 2E6 mid pix both
+shift 2  dx=-397 dy=-380
+shift 3  dx=-518 dy=-423
+shift 4  dx=-885 dy=-662
+cop 5 2
+ai 5 3
+ai 5 4
+wd 5 ../n0315/n0315j.combinedpsf
+close 5
+
+rd 5 ../n0383/n0383j.psf1 ! 1E6 
+rd 6 ../n0383/n0383j.psf2 ! 1E6
+rd 7 ../n0383/n0383j.psf3 ! 3E6 mid pix
+rd 8 ../n0383/n0383j.psf4 ! 2.5E6
+rd 9 ../n0383/n0383j.psf5 ! 1E6 mid pix
+shift 5  dx=-261  dy=-719 
+shift 6	dx=-309  dy=-216
+shift 7	dx=-341  dy=-314
+shift 8	dx=-388  dy=-312
+shift 9	dx=-585  dy=-289
+cop 10 5
+ai 10 6
+ai 10 7
+ai 10 8
+ai 10 9
+wd 10 ../n0383/n0383j.combinedpsf 
+close 10
+
+rd 10 ../n0410/n0410j.psf1 ! 1.4E6 
+rd 11 ../n0410/n0410j.psf4 ! 8E5 mid pix y
+shift 10  dx=-79 dy=-144
+shift 11  dx=-727 dy=-402
+cop 12 10
+ai 12 11
+wd 12 ../n0410/n0410j.combinedpsf
+close 12
+
+rd 12 ../n0507/n0507j.psf2 ! 8E5 mid pix both
+shift 12  dx=-322 dy=-791
+
+rd 13 ../n0547/n0547j.psf1 ! 2E6 
+rd 14 ../n0547/n0547j.psf2 ! 1.4E6 mid both
+rd 15 ../n0547/n0547j.psf3 ! 3.4E6 
+rd 16 ../n0547/n0547j.psf4 ! 4E6 
+rd 17 ../n0547/n0547j.psf5 ! 7E5 mid both
+shift 13  dx=-220 dy=-506
+shift 14  dx=-450 dy=-294
+shift 15  dx=-704 dy=-679
+shift 16  dx=-827 dy=-640
+shift 17  dx=-869 dy=-470
+cop 18 13
+ai 18 14
+ai 18 15
+ai 18 16
+ai 18 17
+wd 18 ../n0547/n0547j.combinedpsf
+close 18
+
+rd 18 ../n0665/n0665j.psf1 ! 7.5E6 mid x
+rd 19 ../n0665/n0665j.psf4 ! 1.6E6
+shift 18  dx=-468 dy=-573
+shift 19  dx=-883 dy=-504
+cop 20 18
+ai 20 19
+wd 20 ../n0665/n0665j.combinedpsf
+close 20
+
+rd 20 ../n0708/n0708j.psf1 ! 1.6E6
+rd 21 ../n0708/n0708j.psf2 ! 1E6
+rd 22 ../n0708/n0708j.psf3 ! 2E6
+rd 23 ../n0708/n0708j.psf4 ! 1.7E6 mid y
+rd 24 ../n0708/n0708j.psf5 ! 1.6E6 
+shift 20  dx=-17 dy=-628
+shift 21  dx=-50 dy=-494
+shift 22  dx=-131 dy=-693
+shift 23  dx=-740 dy=-486
+shift 24  dx=-736 dy=-391
+cop 25 20
+ai 25 21
+ai 25 22
+ai 25 23
+ai 25 24
+wd 25 ../n0708/n0708j.combinedpsf
+close 25
+
+! rd 25 ../n0777/n0777j.psf1
+! rd 26 ../n0777/n0777j.psf2
+! rd 27 ../n0777/n0777j.psf3
+! none of these are any good.
+
+rd 25 ../n0890/n0890j.psf1 ! 1.2E6 mid y
+rd 26 ../n0890/n0890j.psf2 ! 1.5E6
+rd 27 ../n0890/n0890j.psf3 ! 2.4E6 mid y
+rd 29 ../n0890/n0890j.psf5 ! 1.2E6 
+shift 25  dx=-141 dy=-380
+shift 26  dx=-227 dy=-547
+shift 27  dx=-419 dy=-491
+shift 29  dx=-931 dy=-659
+cop 30 25
+ai 30 26
+ai 30 27
+ai 30 29
+wd 30 ../n0890/n0890j.combinedpsf
+close 30
+
+rd 30 ../n1016/n1016j.psf1 ! 1E6 mid y
+shift 30  dx=-343 dy=-299
+
+! add up centered ones
+cop 31 1
+ai 31 5 
+ai 31 6
+ai 31 8
+ai 31 10
+ai 31 13
+ai 31 15
+ai 31 16
+ai 31 19
+ai 31 20
+ai 31 21
+ai 31 22
+ai 31 24
+ai 31 26
+ai 31 29
+wd 31 temp.on.psf
+
+! add up off-centered ones
+cop 32 2
+ai 32 3
+ai 32 4
+ai 32 7
+ai 32 9
+ai 32 11
+ai 32 12
+ai 32 14
+ai 32 17
+ai 32 18
+!ai 32 23
+ai 32 25
+ai 32 27
+ai 32 30
+wd 32 temp.off.psf
+
+!------------
+
+rd 1 ../n1060/n1060j.psf1 ! 2E6 mid x
+rd 2 ../n1060/n1060j.psf2 ! 1E6 mid both
+rd 3 ../n1060/n1060j.psf3 ! 7E5
+shift 1  dx=-148 dy=-643
+shift 2  dx=-251 dy=-648
+shift 3  dx=-951 dy=-581
+cop 4 1
+ai 4 2
+ai 4 3
+wd 4 ../n1060/n1060j.combinedpsf
+close 4
+
+rd 4 ../n1129/n1129j.psf1 ! 1.1E6 
+rd 5 ../n1129/n1129j.psf2 ! 1.8E6 mid x
+rd 6 ../n1129/n1129j.psf3 ! 1.6E6 mid both
+shift 4  dx=-146 dy=-613
+shift 5  dx=-591 dy=-406
+shift 6  dx=-793 dy=-364
+cop 7 4
+ai 7 5
+ai 7 6
+wd 7 ../n1129/n1129j.combinedpsf
+
+rd 7 ../n1167/n1167j.psf1 ! 8E5
+rd 8 ../n1167/n1167j.psf3 ! 1.8E6
+shift 7  dx=-60 dy=-451
+shift 8  dx=-592 dy=-402
+cop 9 7
+ai 9 8
+wd 9 ../n1167/n1167j.combinedpsf
+close 9
+
+rd 9 ../n1272/n1272j.psf1 ! 2.6E6 
+rd 10 ../n1272/n1272j.psf2 ! 9E5 mid y
+shift 9  dx=-93 dy=-331
+shift 10  dx=-409 dy=-288
+cop 11 9
+ai 11 10
+wd 11 ../n1272/n1272j.combinedpsf
+close 11
+
+rd 11 ../n1453/n1453j.psf1 ! 2.5E5 mid both
+rd 12 ../n1453/n1453j.psf2 ! 4E5 mid y 
+rd 13 ../n1453/n1453j.psf3 ! 3E5
+rd 14 ../n1453/n1453j.psf4 ! 4E5
+!rd 15 ../n1453/n1453j.psf5 ! 2.5E5 mid both
+shift 11  dx=-204 dy=-646
+shift 12  dx=-370 dy=-271
+shift 13  dx=-233 dy=-895
+shift 14  dx=-536 dy=-831
+!shift 15  dx=-204 dy=-646
+cop 16 11
+ai 16 12
+ai 16 13
+ai 16 14
+!ai 16 15
+wd 16 ../n1453/n1453j.combinedpsf
+close 16
+
+rd 16 ../n1573/n1573j.psf1 ! 6E6 mid both
+rd 17 ../n1573/n1573j.psf2 ! 1.8E6 
+rd 18 ../n1573/n1573j.psf3 ! 8E5 mid y
+shift 16  dx=-174 dy=-598
+shift 17  dx=-569 dy=-359
+shift 18  dx=-940 dy=-328
+cop 19 16
+ai 19 17
+ai 19 18
+wd 19 ../n1573/n1573j.combinedpsf
+close 19
+
+rd 19 ../n1600/n1600j.psf1 ! 6E5 mid x 
+shift 19  dx=-401 dy=-157
+
+rd 20 ../n1684/n1684j.psf1 ! 1.4E6 mid both
+rd 21 ../n1684/n1684j.psf2 ! 1.3E6 
+rd 22 ../n1684/n1684j.psf4 ! 2.8E6 
+shift 20  dx=-109 dy=-168
+shift 21  dx=-391 dy=-254
+shift 22  dx=-882 dy=-679
+cop 23 20
+ai 23 21
+ai 23 22
+wd 23 ../n1684/n1684j.combinedpsf
+close 23
+
+rd 23 ../n1700/n1700j.psf1 ! 1.1E7 
+rd 24 ../n1700/n1700j.psf2 ! 5E6 mid y
+rd 25 ../n1700/n1700j.psf4 ! 1E6 mid x
+rd 26 ../n1700/n1700j.psf5 ! 1.2E6 
+shift 23  dx=-667 dy=-695
+shift 24  dx=-939 dy=-462
+shift 25  dx=-377 dy=-728
+shift 26  dx=-612 dy=-385
+cop 27 23
+ai 27 24
+ai 27 25
+ai 27 26
+wd 27 ../n1700/n1700j.combinedpsf
+close 27
+
+rd 31 temp.on.psf
+ai 31 3
+ai 31 4
+ai 31 7
+ai 31 8
+ai 31 9
+ai 31 13
+ai 31 14
+ai 31 17
+ai 31 21
+ai 31 22
+ai 31 23
+ai 31 26
+! wd 31 temp.on.psf
+
+rd 32 temp.off.psf
+ai 32 1
+ai 32 2
+ai 32 5
+ai 32 6
+ai 32 10
+ai 32 11
+ai 32 12
+ai 32 15
+ai 32 16
+ai 32 18
+ai 32 19
+ai 32 20
+ai 32 24
+ai 32 25
+! wd 32 temp.off.psf
+
+!-------------
+rd 1 ../n2258/n2258j.psf1 ! 4E6 mid y
+rd 2 ../n2258/n2258j.psf2 ! 1.8E6 
+rd 3 ../n2258/n2258j.psf4 ! 8E5
+shift 1  dx=-391 dy=-274
+shift 2  dx=-67 dy=-747
+shift 3  dx=-358 dy=-672
+cop 4 1
+ai 4 2
+ai 4 3
+wd 4 ../n2258/n2258j.combinedpsf
+close 4
+
+!n2513 6
+rd 4 ../n2513/n2513j.psf1 ! 1.4E6 
+rd 5 ../n2513/n2513j.psf4 ! 1.5E6 
+rd 6 ../n2513/n2513j.psf5 ! 5E5 mid both
+rd 7 ../n2513/n2513j.psf6 ! 1E6 
+shift 4  dx=-34  dy=-730
+shift 5  dx=-695  dy=-400
+shift 6  dx=-745  dy=-329
+shift 7  dx=-750  dy=-514
+cop 8 4
+ai 8 5
+ai 8 6
+ai 8 7
+wd 8 ../n2513/n2513j.combinedpsf
+close 8
+
+rd 8 ../n2672/n2672j.psf2 ! 3.5E6 
+shift 8  dx=-661 dy=-217
+
+! rd 9 ../n2693/n2693j.psf1
+! rd 10 ../n2693/n2693j.psf2
+! rd 11 ../n2693/n2693j.psf3
+! rd 12 ../n2693/n2693j.psf4
+! none of these are very good
+
+rd 9 ../n4914/n4914j.psf1 ! 2E6 
+rd 10 ../n4914/n4914j.psf3 ! 3E6  
+shift 9  dx=-475 dy=-276
+shift 10  dx=-240 dy=-744
+cop 11 9
+ai 11 10
+wd 11 ../n4914/n4914j.combinedpsf
+close 11
+
+! rd 11 ../n5322/n5322j.psf1 
+! rd 12 ../n5322/n5322j.psf2
+! rd 13 ../n5322/n5322j.psf3
+! these are all poor
+
+rd 11 ../n5557/n5557j.psf1 ! 2.4E6 mid x
+shift 11 dx=-749 dy=-44
+
+rd 12 ../n6482/n6482j.psf1 ! 2E6
+rd 13 ../n6482/n6482j.psf2 ! 2.7E6 mid y
+rd 14 ../n6482/n6482j.psf3 ! 2.8E6 
+rd 15 ../n6482/n6482j.psf4 ! 2.5E6
+rd 16 ../n6482/n6482j.psf5 ! 1.3E6 mid both
+shift 12  dx=-25 dy=-302
+shift 13  dx=-591 dy=-626
+shift 14  dx=-663 dy=-264
+shift 15  dx=-792 dy=-675
+shift 16  dx=-890 dy=-280
+cop 17 12
+ai 17 13
+ai 17 14
+ai 17 15
+ai 17 16
+wd 17 ../n6482/n6482j.combinedpsf
+close 17
+
+rd 17 ../n7052/n7052j.psf1 ! 9E5 
+rd 18 ../n7052/n7052j.psf2 ! 2.4E6
+rd 19 ../n7052/n7052j.psf4 ! 3E6
+rd 20 ../n7052/n7052j.psf5 ! 4E6
+shift 17  dx=-26 dy=-467
+shift 18  dx=-61 dy=-713
+shift 19  dx=-365 dy=-343
+shift 20  dx=-758 dy=-684
+cop 21 17
+ai 21 18
+ai 21 19
+ai 21 20
+wd 21 ../n7052/n7052j.combinedpsf
+close 21
+
+rd 21 ../n7619/n7619j.psf1 ! 1.7E6 
+rd 22 ../n7619/n7619j.psf3 ! 8E5 mid x
+rd 23 ../n7619/n7619j.psf4 ! 2.4E6
+shift 21  dx=-263 dy=-572
+shift 22  dx=-145 dy=-374
+shift 23  dx=-897 dy=-327
+cop 24 21
+ai 24 22
+ai 24 23
+wd 24 ../n7619/n7619j.combinedpsf
+close 24
+
+rd 31 temp.on.psf
+ai 31 2
+ai 31 3
+ai 31 4
+ai 31 5
+ai 31 7
+ai 31 8
+ai 31 9
+ai 31 10
+ai 31 12
+ai 31 14
+ai 31 15
+ai 31 17
+ai 31 18
+ai 31 19
+ai 31 20
+ai 31 21
+ai 31 23
+
+rd 32 temp.off.psf
+ai 32 1
+ai 32 6
+ai 32 11
+ai 32 13
+ai 32 16
+ai 32 22
+
+wd 31 combined.on.psf
+wd 32 combined.off.psf
+ai 31 32
+wd 31 combined.psf
+
+
+!---------
+Just the brightest ones, extracted from rescaled images:
+
+rd 1 n0315j.psf
+rd 2 n0383j.psf
+rd 3 n0665j.psf
+rd 4 n0708j.psf1
+rd 5 n0708j.psf2
+rd 6 n0777j.psf
+rd 7 n1167j.psf1
+rd 8 n1167j.psf2
+rd 9 n1573j.psf
+rd 10 n2672j.psf
+rd 11 n2693j.psf
+
+shift 1 dx=-220 dy=-351  ! mid y
+shift 2 dx=-838 dy=-301  ! centered
+shift 3 dx=-829 dy=-263  ! mid x,y
+shift 4 dx=-465 dy=-621  ! mid x
+shift 5 dx=-749 dy=-470  ! mid y
+shift 6 dx=-937 dy=-706  ! mid y
+shift 7 dx=-655 dy=-235  ! mid y
+shift 8 dx=-535 dy=-281  ! ~centered
+shift 9 dx=-744 dy=-620  ! mid y
+shift 10 dx=-708 dy=-726  ! centered, may be sat?
+shift 11 dx=-725 dy=-466  ! mid x
+
+cop 12 1
+ai 12 2
+ai 12 3
+ai 12 4
+ai 12 5
+ai 12 6
+ai 12 7
+ai 12 8
+ai 12 9
+ai 12 10
+ai 12 11
+wd 12 combinedj.bright.psf.14219
+
+cop 13 2
+ai 13 8
+ai 13 10
+wd 13 combinedj.on.bright.psf.14219
