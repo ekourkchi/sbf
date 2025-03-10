@@ -52,6 +52,7 @@ docker run -it --rm \
     -v $(pwd)/config:/home/sbf/config \
     -v $(pwd)/params:/home/sbf/params \
     -e SHELL=/bin/bash \
+    -e HOST_USER=$USER \
     --user 1000:1000 \
     --workdir /home/sbf \
     --name $containerName \

@@ -1,4 +1,4 @@
-import os, string, math, uuid, time, json
+import os, sys, uuid
 import subprocess
 import numpy as np
 from scipy.linalg import eigh
@@ -48,7 +48,7 @@ class SBFobject:
     R = 1  # Kron Radius
     angle = 0  # Position angle (CCW/x)
 
-    catalName = "catal.dat"
+    catalName = "catalog.dat"
     objRoot = "./"
     inFolder = "./"
     monsta = "monsta"
@@ -57,8 +57,8 @@ class SBFobject:
     def __init__(
         self,
         name,
-        outFolder=None,
         inFolder=None,
+        outFolder=None,
         config="./",
         automatic=True,
         force_new=False,
@@ -102,21 +102,22 @@ class SBFobject:
 
         objRoot = outFolder + name + "_" + self.uuid
         createDir(objRoot)
-
+        print('Creating output folder: ',objRoot)
+        
         self.objRoot = objRoot + "/"
 
         if inFolder is not None:
             self.inFolder = inFolder + "/"
 
         if automatic:
-            if True: # try:
+            try:
                 self.SExtract()
-            # except:
-            #     print("Error: Could not run Source Extractor on the file")
-            #     fits_file = self.inFolder + "{}/{}j.fits".format(name, name)
-            #     if not os.path.exists(fits_file):
-            #         print("Couldn't find " + fits_file)
-            #     return
+            except:
+                print("Error: Could not run Source Extractor on the file")
+                fits_file = self.inFolder + "{}/{}j.fits".format(name, name)
+                if not os.path.exists(fits_file):
+                    print("Couldn't find " + fits_file)
+                return
 
         hdu_list = fits.open(self.inFolder + "{}/{}j.fits".format(name, name))
         image_data = hdu_list[0].data
@@ -126,8 +127,13 @@ class SBFobject:
         if automatic:
             self.backSextract()
 
-            self.r_max = int(
-                min([self.x0, self.x_max - self.x0, self.y0, self.y_max - self.y0])
+#            self.r_max = int(
+#                min([self.x0, self.x_max - self.x0, self.y0, self.y_max - self.y0])
+#            )
+
+            xx = min([self.x0, self.x_max - self.x0])
+            yy = min([self.y0, self.y_max - self.y0])
+            self.r_max = int(np.sqrt(xx*xx + yy*yy)               
             )
 
     def tv_resid(self, model=0, ax=None, options="", additions=""):
@@ -188,9 +194,7 @@ class SBFobject:
 
         return self.plot_jpg(jpg_name, ax=ax)
 
-    
     def SExtract(self):
-
 
         name = self.name
         root = self.objRoot
@@ -706,6 +710,7 @@ class SBFobject:
         return monsta_output
 
     def naive_Sextract(self, minArea=10, thresh=2, mask=None, smooth=None):
+
         name = self.name
         root = self.objRoot
 
@@ -784,6 +789,7 @@ class SBFobject:
         return fig, ax1, ax2, ax3, ax4
 
     def backSextract(self, thresh=0.03):
+
         name = self.name
         root = self.objRoot
         config = self.config
@@ -978,15 +984,15 @@ class SBFobject:
         ax1.set_xlabel("X [pixel]", fontsize=12)
         ax1.set_ylabel("Y [pixel]", fontsize=12)
 
-        print("Back Median: %.2f" % self.sky_med)
-        print("Back Mean: %.2f" % self.sky_ave)
-        print("Back Stdev: %.2f" % self.sky_std)
+        print("Background Median: %.0f" % self.sky_med)
+        print("Background Mean: %.0f" % self.sky_ave)
+        print("Background Stdev: %.0f" % self.sky_std)
 
         ## Histogram of the potential background pixel values
         ax2.hist(
             self.back_pixels,
             bins=np.linspace(
-                self.sky_med - 3 * self.sky_std, self.sky_med + 3 * self.sky_std, 10
+                self.sky_med - 3 * self.sky_std, self.sky_med + 3 * self.sky_std, 20
             ),
             density=True,
             color="g",
@@ -994,7 +1000,7 @@ class SBFobject:
         )
         ax2.set_xlabel("pixel value", fontsize=12)
         ax2.set_ylabel("frequency", fontsize=12)
-        ax2.set_title("Back. Histogram", fontsize=14)
+        ax2.set_title("Background Histogram", fontsize=14)
 
         self.tv(options="log", ax=ax3)
         ax3.set_title(self.name, fontsize=14)
@@ -1219,11 +1225,11 @@ class SBFobject:
         fig, ax1, ax2, ax3, ax4 = self.naive_Sextract(
             minArea=minarea, thresh=threshold, mask=0, smooth=smooth
         )
-        ax1.set_title("Segmentation", fontsize=14)
+        ax1.set_title("SE segmentation", fontsize=14)
 
         self.addMasks(maskList=[0], mask=1)
 
-        ## improting Dmask and add it to the initial mask we find using
+        ## importing Dmask and add it to the initial mask we find using
         ## a crude SExtractor run
         Dmask = self.inFolder + "{}/{}j.dmask".format(self.name, self.name)
         if os.path.exists(Dmask):
@@ -1232,7 +1238,7 @@ class SBFobject:
 
             im, h = self.maskOpen(mask=0)
             ax3.imshow(np.flipud(im))
-            ax3.set_title("Dmask", fontsize=14)
+            ax3.set_title("dmask", fontsize=14)
 
         else:
             print(Dmask + " doesn't exist.")
@@ -1250,7 +1256,7 @@ class SBFobject:
             pngName = self.objRoot + pngName
 
         plt.savefig(pngName)
-        print("fig. name: ", pngName)
+#        print("fig. name: ", pngName)
 
         fig.tight_layout(pad=0)
         try: 
@@ -1287,7 +1293,7 @@ class SBFobject:
             "c_kron",
             main_key + "_ckron",
             params={
-                "default": 2.5,
+                "default": 3.5,
                 "min": 0.5,
                 "max": 7,
                 "step": 0.1,
@@ -1321,16 +1327,18 @@ class SBFobject:
             main_key + "_option",
             params={
                 "options": [
-                    "COS3X=0",
-                    "COS3X=1",
-                    "COS3X=2",
-                    "COS4X=1",
-                    "COS4X=2",
-                    "COS3X=-1",
-                    "COS3X=-2",
+                    "None",
+                    "COS3X=0 (none)",
+                    "COS3X=1 (median)",
+                    "COS3X=2 (each annulus)",
+                    "COS4X=0 (none)",
+                    "COS4X=1 (median)",
+                    "COS4X=2 (each annulus)",
+                    "COS3X=-1 (median cos(6x) model)",
+                    "COS3X=-2 (each cos(6x) model)",
                 ],
-                "default": "COS3X=0",
-                "description": "Mode",
+                "default": "None",
+                "description": "Higher-order fits",
             },
             widget_type="dropdown",
         )
@@ -1354,7 +1362,7 @@ class SBFobject:
                 "min": 3,
                 "max": 200,
                 "step": 1,
-                "description": "r0 [pixel]",
+                "description": "r0 (pix)",
             },
         )
 
@@ -1367,7 +1375,7 @@ class SBFobject:
                 "min": 0.5,
                 "max": 7,
                 "step": 0.1,
-                "description": "Kron_factor",
+                "description": "Kron factor",
             },
         )
 
@@ -1380,7 +1388,7 @@ class SBFobject:
                 "min": 0.1,
                 "max": 1.2,
                 "step": 0.01,
-                "description": "Sky_factor",
+                "description": "Sky factor",
             },
         )
 
@@ -1393,7 +1401,7 @@ class SBFobject:
                 "min": 5,
                 "max": 50,
                 "step": 1,
-                "description": "k",
+                "description": "k ellipse",
             },
         )
 
@@ -1403,16 +1411,18 @@ class SBFobject:
             main_key + "_option",
             params={
                 "options": [
-                    "COS3X=0",
-                    "COS3X=1",
-                    "COS3X=2",
-                    "COS4X=1",
-                    "COS4X=2",
-                    "COS3X=-1",
-                    "COS3X=-2",
+                    "None",
+                    "COS3X=0 (none)",
+                    "COS3X=1 (median)",
+                    "COS3X=2 (each annulus)",
+                    "COS4X=0 (none)",
+                    "COS4X=1 (median)",
+                    "COS4X=2 (each annulus)",
+                    "COS3X=-1 (median cos(6x) model)",
+                    "COS3X=-2 (each cos(6x) model)",
                 ],
-                "default": self.params[basic_key]["option"],
-                "description": "Mode",
+                "default": "None",
+                "description": "Higher-order fits",
             },
             widget_type="dropdown",
         )
@@ -1426,7 +1436,7 @@ class SBFobject:
                 "min": 5,
                 "max": 1000,
                 "step": 1,
-                "description": "Min_Area",
+                "description": "Min Area",
             },
         )
 
@@ -1461,9 +1471,9 @@ class SBFobject:
             "renuc",
             main_key + "_renuc",
             params={
-                "default": 1,
+                "default": 2,
                 "min": 1,
-                "max": 5,
+                "max": 10,
                 "step": 0.5,
                 "description": "Renuc",
             },
@@ -1974,7 +1984,7 @@ class SBFobject:
 
         objDict["index"] = "value"
         objDict["uuid"] = self.uuid
-        objDict["User"] = os.getlogin().capitalize()
+        objDict["User"] = os.getenv("HOST_USER").capitalize()
         objDict["Time"] = datetime.now()
         objDict["Name"] = self.name
         objDict["X_pixels"] = self.x_max
