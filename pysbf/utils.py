@@ -658,7 +658,7 @@ def seg2mask(
         imarray[(imarray != -1)] = 1  # masked
         imarray[imarray == -1] = 0  # good pixel
 
-    fits.writeto(outMask, np.float32(imarray), header, overwrite=overwrite)
+    fits.writeto(outMask, float32(imarray), header, overwrite=overwrite)
 
     return imarray
 
@@ -672,7 +672,7 @@ def seg2mask(
 #     imarray[imarray>seg_num] = 0
 #     imarray[imarray==-1] = 1
 
-#     fits.writeto(outMask, np.float32(imarray), header, overwrite=overwrite)
+#     fits.writeto(outMask, float32(imarray), header, overwrite=overwrite)
 
 #     return imarray
 
@@ -769,33 +769,33 @@ def get_obj_params(df):
 
     main_key = "backSextract"
     params[main_key] = {}
-    params[main_key]["threshold"] = np.float(df.loc["BXT"].value.strip())
+    params[main_key]["threshold"] = float(df.loc["BXT"].value.strip())
 
     main_key = "naiveSextract"
     params[main_key] = {}
-    params[main_key]["minarea"] = np.float(df.loc["NXM"].value.strip())
-    params[main_key]["threshold"] = np.float(df.loc["NXT"].value.strip())
-    params[main_key]["smooth"] = np.float(df.loc["NXS"].value.strip())
+    params[main_key]["minarea"] = float(df.loc["NXM"].value.strip())
+    params[main_key]["threshold"] = float(df.loc["NXT"].value.strip())
+    params[main_key]["smooth"] = float(df.loc["NXS"].value.strip())
 
     main_key = "basic_elliprof"
     params[main_key] = {}
-    params[main_key]["r0"] = np.float(df.loc["BER"].value.strip())
-    params[main_key]["c_kron"] = np.float(df.loc["BEC"].value.strip())
-    params[main_key]["sky_factor"] = np.float(df.loc["BES"].value.strip())
-    params[main_key]["k_ellipse"] = np.float(df.loc["BEK"].value.strip())
+    params[main_key]["r0"] = float(df.loc["BER"].value.strip())
+    params[main_key]["c_kron"] = float(df.loc["BEC"].value.strip())
+    params[main_key]["sky_factor"] = float(df.loc["BES"].value.strip())
+    params[main_key]["k_ellipse"] = float(df.loc["BEK"].value.strip())
     params[main_key]["option"] = df.loc["BEO"].value.strip()
 
     main_key = "second_elliprof"
     params[main_key] = {}
-    params[main_key]["r0"] = np.float(df.loc["SER"].value.strip())
-    params[main_key]["c_kron"] = np.float(df.loc["SEC"].value.strip())
-    params[main_key]["sky_factor"] = np.float(df.loc["SEF"].value.strip())
-    params[main_key]["k_ellipse"] = np.float(df.loc["SEK"].value.strip())
+    params[main_key]["r0"] = float(df.loc["SER"].value.strip())
+    params[main_key]["c_kron"] = float(df.loc["SEC"].value.strip())
+    params[main_key]["sky_factor"] = float(df.loc["SEF"].value.strip())
+    params[main_key]["k_ellipse"] = float(df.loc["SEK"].value.strip())
     params[main_key]["option"] = df.loc["SEO"].value.strip()
-    params[main_key]["minarea"] = np.float(df.loc["SEM"].value.strip())
-    params[main_key]["threshold"] = np.float(df.loc["SET"].value.strip())
-    params[main_key]["smooth"] = np.float(df.loc["SES"].value.strip())
-    params[main_key]["renuc"] = np.float(df.loc["SEN"].value.strip())
+    params[main_key]["minarea"] = float(df.loc["SEM"].value.strip())
+    params[main_key]["threshold"] = float(df.loc["SET"].value.strip())
+    params[main_key]["smooth"] = float(df.loc["SES"].value.strip())
+    params[main_key]["renuc"] = float(df.loc["SEN"].value.strip())
 
     return params
 
