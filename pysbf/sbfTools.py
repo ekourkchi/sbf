@@ -1,41 +1,14 @@
-import os, sys, uuid
-import subprocess
+import uuid, os
 import numpy as np
-from scipy.linalg import eigh
-from scipy.optimize import minimize_scalar
 import matplotlib.pyplot as plt
-import scipy.linalg as sla
-import pandas as pd
-import numpy as np
 from matplotlib import patches
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-from shapely.geometry.polygon import LinearRing
-from astropy.io import fits
-from astropy import wcs
-from matplotlib import cm
-from matplotlib.colors import LogNorm
 from datetime import datetime
-import pickle
 import ipywidgets as widgets
-from os.path import exists
 
-import numpy
-from astropy.table import Table
-import requests
-from PIL import Image
-from io import BytesIO
-import pylab, os, sys
-
-import copy
 
 from .utils import *
-
-
-# Redirect output using subprocess
-def run_command(command: list):
-    with open(os.devnull, 'w') as devnull:
-        subprocess.run(command, stdout=devnull, stderr=devnull)
 
 ##############################################################
 class SBFobject:

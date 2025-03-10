@@ -3,12 +3,13 @@
 
 
 export NOTEBOOKS_FOLDER="$PWD/notebooks"
-export NOTEBOOK_IP="8888"
+export NOTEBOOK_IP="8895"
+export SBF_PATH="/Users/ehsan/sbf/"
 
-export DATA_IN="/Users/ehsan/sbf/data_in/"
-export DATA_OUT="/Users/ehsan/sbf/data_out/"
-export PS_IN="/Users/ehsan/sbf/ps_data_in/"
-export PS_OUT="/Users/ehsan/sbf/ps_data_out/"
+export DATA_IN="$SBF_PATH/data_in/"
+export DATA_OUT="$SBF_PATH/data_out/"
+export PS_IN="$SBF_PATH/ps_data_in/"
+export PS_OUT="$SBF_PATH/ps_data_out/"
 
 
 docker pull astromatrix/sbf_notebook:v1.0

@@ -1,6 +1,5 @@
 from .utils import *
-import copy
-
+from datetime import datetime
 
 ##############################################################
 def SE_foreground(
@@ -144,7 +143,8 @@ def SE_foreground(
     sex_cmd += " -WEIGHT_TYPE  MAP_VAR"
 
     # runnint Sextractor
-    xcmd(sex_cmd + " > " + root + "sextractor.log", verbose=False)
+    # xcmd(sex_cmd + " > " + root + "sextractor.log", verbose=False)
+    run_command(sex_cmd.split(" "))
 
     df = get_sextract_catal_df(objCatal)
     df["rc"] = np.sqrt((df.X_IMAGE - X0) ** 2 + (df.Y_IMAGE - Y0) ** 2)
