@@ -658,7 +658,7 @@ def seg2mask(
         imarray[(imarray != -1)] = 1  # masked
         imarray[imarray == -1] = 0  # good pixel
 
-    fits.writeto(outMask, float32(imarray), header, overwrite=overwrite)
+    fits.writeto(outMask, np.float32(imarray), header, overwrite=overwrite)
 
     return imarray
 
@@ -672,7 +672,7 @@ def seg2mask(
 #     imarray[imarray>seg_num] = 0
 #     imarray[imarray==-1] = 1
 
-#     fits.writeto(outMask, float32(imarray), header, overwrite=overwrite)
+#     fits.writeto(outMask, np.float32(imarray), header, overwrite=overwrite)
 
 #     return imarray
 
@@ -1034,7 +1034,7 @@ class ds9_region_display:
     def clicked(self, _):
         self.on_off()
 
-def on_off(self):
+    def on_off(self):
         if self.status:
             os.system("xpaset -p ds9 regions delete all")
             self.status = False

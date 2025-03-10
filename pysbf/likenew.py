@@ -12,7 +12,7 @@ class LikeNew:
             out_folder = in_folder
 
         mylib = cdll.LoadLibrary(
-            os.path.join(os.path.dirname(__file__), "../lib/likenew6.so")
+            os.path.join(os.path.dirname(__file__), "/artifacts/likenew/lib/likenew6.so")
         )
         self.likenew_ = mylib.likenew_
 
