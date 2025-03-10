@@ -5,8 +5,11 @@
 export NOTEBOOKS_FOLDER="$PWD/notebooks"
 export NOTEBOOK_IP="8888"
 
-export DATA_IN_PATH="/Users/ehsan/sbf/data_in/"
-export DATA_OUT_PATH="/Users/ehsan/sbf/data_out/"
+export DATA_IN="/Users/ehsan/sbf/data_in/"
+export DATA_OUT="/Users/ehsan/sbf/data_out/"
+export PS_IN="/Users/ehsan/sbf/ps_data_in/"
+export PS_OUT="/Users/ehsan/sbf/ps_data_out/"
+
 
 docker pull astromatrix/sbf_notebook:v1.0
 
@@ -42,8 +45,10 @@ docker run -it --rm \
     -p $NOTEBOOK_IP:8888 \
     -v $(pwd)/pysbf:/home/sbf/pysbf:ro \
     -v $NOTEBOOKS_FOLDER:/home/sbf/notebooks \
-    -v $DATA_IN_PATH:/home/sbf/data_in \
-    -v $DATA_OUT_PATH:/home/sbf/data_out \
+    -v $DATA_IN:/home/sbf/data_in \
+    -v $DATA_OUT:/home/sbf/data_out \
+    -v $PS_IN:/home/sbf/ps_data_in \
+    -v $PS_OUT:/home/sbf/ps_data_out \
     -v $(pwd)/config:/home/sbf/config \
     -v $(pwd)/params:/home/sbf/params \
     -e SHELL=/bin/bash \

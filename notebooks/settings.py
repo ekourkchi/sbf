@@ -14,7 +14,9 @@ IN_FOLDER = HOME + 'data_in/wfc3/'
 OUT_FOLDER = HOME + 'data_out/wfc3/'
 
 # PS path
-PS_PATH = HOME + 'data/PS'
+PS_IN = HOME + 'ps_data_in/'
+PS_OUT = HOME + 'ps_data_out/'
+
 
 
 

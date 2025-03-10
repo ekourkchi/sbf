@@ -1800,7 +1800,7 @@ class SBFobject:
         df = df.apply(pd.to_numeric, errors="coerce")
 
         # fig, ax = plt.subplots(1,1, figsize=(7,6))
-        fig, (ax, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        fig, (ax, ax2) = plt.subplots(1, 2, figsize=(10, 4))
 
         x = df.Rmaj ** 0.25
         y = 2.5 * np.log10(df.I0)
@@ -1875,6 +1875,17 @@ class SBFobject:
 
         print(df.head())
 
+
+        fig.tight_layout(pad=0)
+        try: 
+            fig.canvas.layout.width = '1000px'  # Set width to match figsize
+            fig.canvas.layout.height = '400px'  # Set height to match figsize
+            fig.canvas.toolbar_visible = False
+            fig.canvas.header_visible = False
+            fig.canvas.footer_visible = False
+        except:
+            pass
+
         return (ax, ax2)
 
     #########################################################
@@ -1941,6 +1952,17 @@ class SBFobject:
         self.params["background"]["mean"] = mean
         self.params["background"]["std"] = std
         self.params["background"]["new_sky_factor"] = new_factor
+
+        fig.tight_layout(pad=0)
+        try: 
+            fig.canvas.layout.width = '1000px'  # Set width to match figsize
+            fig.canvas.layout.height = '400px'  # Set height to match figsize
+            fig.canvas.toolbar_visible = False
+            fig.canvas.header_visible = False
+            fig.canvas.footer_visible = False
+        except:
+            pass
+
 
         return (ax1, ax2)
 

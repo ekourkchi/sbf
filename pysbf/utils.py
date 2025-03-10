@@ -1034,10 +1034,25 @@ class ds9_region_display:
     def clicked(self, _):
         self.on_off()
 
-    def on_off(self):
+def on_off(self):
         if self.status:
             os.system("xpaset -p ds9 regions delete all")
             self.status = False
         else:
             os.system("xpaset -p ds9 regions " + self.reg_file + " &")
             self.status = True
+
+#######################################
+
+def getPGCid(name):
+    """extracting the PGC ID of a galaxy from NED given its name
+    Args:
+        objname  (str): galaxy name
+    Returns:
+        int: PGC ID
+    """
+    my_url = 'http://ned.ipac.caltech.edu/cgi-bin/nph-objsearch?objname='+name+'&extend=no&of=xml_names&extend=no&hconst=73&omegam=0.27&omegav=0.73&corr_z=1&out_csys=Equatorial&out_equinox=J2000.0&obj_sort=RA+or+Longitude&of=pre_text&zv_breaker=30000.0&list_limit=5&img_stamp=YES'
+    tag = mySoup(my_url).findAll('a', href="/cgi-bin/catdef?prefix=PGC")[0].parent
+    pgc = int(str(tag).split("</a>")[1].split('</td>')[0].strip())
+   
+    return pgc
