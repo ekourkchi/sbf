@@ -1,5 +1,7 @@
 ## Easy setup instruction
 
+[old version]
+
 - open a terminal
 
 - go to the `<path>/pysbf` folder
