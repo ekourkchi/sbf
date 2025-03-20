@@ -136,5 +136,5 @@ For further assistance, please refer to the documentation or open an issue in th
 
 ---
 ## License
-This project is licensed under the MIT License. See `LICENSE` for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
