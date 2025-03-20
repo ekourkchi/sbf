@@ -5,7 +5,7 @@ This repository contains all the necessary scripts and configurations to set up 
 ## Prerequisites
 Before proceeding, ensure you have the following installed on your system:
 
-1. **Docker**: If not installed, follow the instructions in `Install_Docker.md` to set it up.
+1. **Docker**: If not installed, follow the instructions in [Install_Docker.md](Install_Docker.md) to set it up.
 2. **X11 System** (for GUI applications inside the container):
    - **Windows**: Install an X server like [VcXsrv](https://sourceforge.net/projects/vcxsrv/).
    - **macOS**: Install [XQuartz](https://www.xquartz.org/).
@@ -47,7 +47,7 @@ To display graphical applications from inside the container:
    ```sh
    xhost +localhost
    ```
-4. Refer to `run_docker.sh` for further assistance, as the `DISPLAY` command might vary depending on your system.
+4. Refer to `run_docker_<platform>.sh` for further assistance, as the `DISPLAY` command might vary depending on your system.
    ```sh
    export DISPLAY=host.docker.internal:0
    ```
@@ -85,7 +85,7 @@ cd sbf
 ### Step 5: Run the Docker Container
 Execute the script to start the container:
 ```sh
-$ ./run_docker.sh
+$ ./run_docker_<platform>.sh
 ```
 - On the first run, this script will download all required Docker images and dependencies.
 - If updates to the container are available, it will pull the latest version before starting.
@@ -118,7 +118,7 @@ Then open your browser and navigate to:
 ```
 http://localhost:8899
 ```
-**Note:** The port number should match the one specified in `run_docker.sh`, parameter `NOTEBOOK_HOST_IP`.
+**Note:** The port number should match the one specified in `run_docker_<platform>.sh`, parameter `NOTEBOOK_HOST_IP`.
 
 ---
 ## Troubleshooting
